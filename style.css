@@ -1,0 +1,146 @@
+/**
+ * PVLng - PhotoVoltaic Logger new generation (https://pvlng.com/)
+ *
+ * @link       https://github.com/KKoPV/PVLng
+ * @author     Knut Kohl <github@knutkohl.de>
+ * @copyright  2012-2016 Knut Kohl
+ * @license    MIT License (MIT) http://opensource.org/licenses/MIT
+ */
+
+body {
+}
+
+template {
+	display: none !important;
+}
+
+#wrapper {
+  width: 100%;
+}
+
+#page-wrapper {
+  padding: 0 15px;
+  background-color: white;
+}
+
+.page-header {
+    border-bottom: 0;
+    color: #337ab7;
+}
+
+.page-header .btn:hover {
+    color: #337ab7;
+}
+
+.row.badges,
+.month-wrapper,
+.chart-wrapper {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .month-wrapper {
+        display: inherit;
+    }
+}
+
+<<<<<<< HEAD
+=======
+.footer {
+    padding-bottom: 2em;
+    text-align: center;
+    font-size: smaller;
+}
+
+>>>>>>> release/0.1.0
+.btn-outline {
+  color: inherit;
+  background-color: transparent;
+  transition: all .5s;
+}
+.btn-primary.btn-outline {
+  color: #428bca;
+}
+.btn-success.btn-outline {
+  color: #5cb85c;
+}
+.btn-info.btn-outline {
+  color: #5bc0de;
+}
+.btn-warning.btn-outline {
+  color: #f0ad4e;
+}
+.btn-danger.btn-outline {
+  color: #d9534f;
+}
+.btn-primary.btn-outline:hover,
+.btn-success.btn-outline:hover,
+.btn-info.btn-outline:hover,
+.btn-warning.btn-outline:hover,
+.btn-danger.btn-outline:hover {
+  color: white;
+}
+.panel .slidedown .glyphicon,
+.chat .glyphicon {
+  margin-right: 5px;
+}
+.btn-circle {
+  width: 30px;
+  height: 30px;
+  padding: 6px 0;
+  border-radius: 15px;
+  text-align: center;
+  font-size: 12px;
+  line-height: 1.428571429;
+}
+.btn-circle.btn-lg {
+  width: 50px;
+  height: 50px;
+  padding: 10px 16px;
+  border-radius: 25px;
+  font-size: 18px;
+  line-height: 1.33;
+}
+.btn-circle.btn-xl {
+  width: 70px;
+  height: 70px;
+  padding: 10px 16px;
+  border-radius: 35px;
+  font-size: 24px;
+  line-height: 1.33;
+}
+.show-grid [class^="col-"] {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border: 1px solid #ddd;
+  background-color: #eee !important;
+}
+.show-grid {
+  margin: 15px 0;
+}
+.huge {
+  font-size: 40px;
+}
+.panel-green {
+  border-color: #5cb85c;
+}
+.panel-green > .panel-heading {
+  border-color: #5cb85c;
+  color: white;
+  background-color: #5cb85c;
+}
+.panel-green > .panel-footer {
+  color: #5cb85c;
+}
+
+.panel-yellow {
+  border-color: #f0ad4e;
+}
+.panel-yellow > .panel-heading {
+  border-color: #f0ad4e;
+  color: white;
+  background-color: #f0ad4e;
+}
+.panel-yellow > .panel-footer {
+  color: #f0ad4e;
+}

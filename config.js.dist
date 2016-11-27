@@ -1,0 +1,61 @@
+/**
+ * PVLng - PhotoVoltaic Logger new generation (https://pvlng.com/)
+ *
+ * @link       https://github.com/KKoPV/PVLng
+ * @author     Knut Kohl <github@knutkohl.de>
+ * @copyright  2012-2016 Knut Kohl
+ * @license    MIT License (MIT) http://opensource.org/licenses/MIT
+ */
+var config = {
+
+    /**
+     * Where is PVLng installed
+     * host[:port]
+     */
+    host: 'localhost',
+
+    /**
+     * Channels for the current badges data
+     * required, at least one :-)
+     * Labels and untis are used from channel defintions
+     */
+    badges: [
+        [
+            // Channel GUID
+            guid: ''
+            // One of the Font Awesome (http://fontawesome.io/icons)
+            // without "fa-"
+            icon: '',
+            // To use other decimals as channel defines, overwrite here
+            decimals: null
+        ]
+    ],
+
+    /**
+     * Channel GUID of generated power
+     * optional
+     * If not given, no day chart will be generated
+     */
+    power: '',
+
+    /**
+     * Channel GUID of generated energy
+     * optional
+     * If not given, no week, month and year charts will be generated
+     */
+    energy: '',
+
+    /**
+     * Monthly estimates of production
+     * optional
+     * See PVGIS for calucation (http://re.jrc.ec.europa.eu/pvgis/apps4/pvest.php)
+     */
+    estimate: [
+        // Jan,  Feb,   Mar,  Apr,  May,  Jun,  Jul,  Aug,  Sep,  Oct,  Nov,  Dez
+             0,    0,     0,    0,    0,    0,    0,    0,    0,    0,    0,    0
+        // Check given data with array sum
+        // var sum = config.estimate.reduce(function(a, b) { return a+b }, 0);
+        // skip if sum is zero
+    ]
+
+};

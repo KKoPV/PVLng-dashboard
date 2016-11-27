@@ -1,0 +1,13 @@
+{
+    "name": "PhotoVoltaik Logger new generation",
+    "short_name": "PVLng",
+    "lang": "en",
+    "display": "standalone",
+    "theme_color": "#FFFFFF",
+    "icons": [
+        {
+            "src": "img/apple-touch-icon-152x152.png",
+            "sizes": "152x152"
+        }
+    ]
+}
