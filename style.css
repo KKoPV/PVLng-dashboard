@@ -44,15 +44,12 @@ template {
     }
 }
 
-<<<<<<< HEAD
-=======
 .footer {
     padding-bottom: 2em;
     text-align: center;
     font-size: smaller;
 }
 
->>>>>>> release/0.1.0
 .btn-outline {
   color: inherit;
   background-color: transparent;
