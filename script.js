@@ -33,7 +33,7 @@ var color_act = colors[0],
         legend: { enabled: false },
         xAxis: { type: 'datetime' }
     },
-    today, i18n;
+    i18n;
 
 /**
  * Detect prefered language from browser language
@@ -57,9 +57,7 @@ function getUserLanguage(languages) {
  */
 function loadData() {
 
-    var container = $('.badges');
-
-    today = new Date();
+    var container = $('.badges'), now = new Date();
 
     if (!container.children().length) {
         // 1st call, create badges by cloning template
@@ -69,32 +67,65 @@ function loadData() {
             $('.channel-icon', el).addClass('fa-' + badge.icon);
             el.prop('id', 'badge-'+id).appendTo(container);
         });
-        container.show();
+        $('body').css({ opacity: 1 });
     }
 
     // Get data
     $(config.badges).each(function(id, badge) {
-        $.getJSON(
-            APIUrl + 'data/last/' + badge.guid + '?attributes=true&callback=?',
-            function(data) {
-                var attr = data.shift(), name = attr.name, el = '#badge-'+id;
+
+        var url = APIUrl, data = { attributes: true };
+
+        if (['sunrise', 'sunset'].indexOf(badge.guid) != -1) {
+            data.format = 'H:i';
+        } else {
+            url += 'data/last/';
+        }
+
+        $.ajax({
+            url:        url + badge.guid,
+            jsonp:      'callback',
+            dataType:   'jsonp',
+            data:       data,
+            success:    function(data) {
+
+                var attr = data.shift(),
+                    name = i18n._(attr.name, true),
+                    el   = '#badge-'+id;
+
                 if (attr.description) name += ' (' + attr.description + ')';
+
                 $('.channel-name', el).html(name);
                 $('.channel-unit', el).html(attr.unit);
+
                 if (data.length) {
                     // Todays data exists
-                    var d = new Date(data[0].timestamp*1000);
-                    $('.last-value', el).html(
-                        data[0].data.toFixed(badge.decimals != null ? badge.decimals : attr.decimals)
-                    );
+
+                    var d = new Date(data[0].timestamp*1000),
+                        v = attr.numeric // Round as needed
+                          ? data[0].data.toFixed(badge.decimals != null ? badge.decimals : attr.decimals)
+                          : data[0].data;
+
+                    // Max. age 10 minutes, mostly for power channels
+                    if (attr.meter === 0 && d.getTime() + 10*60*1000 < now.getTime()) {
+                        v = '-';
+                    }
+
+                    // -0 is bad...
+                    if (v == '-0') v = '0';
+
+                    $('.last-value', el).html(v);
+
                     $('.panel-footer .pull-left', el).html(d.toLocaleDateString());
                     $('.panel-footer .pull-right', el).html(d.toLocaleTimeString());
+
                 } else {
+
                     $('.last-value, .panel-footer .pull-left, .panel-footer .pull-right', el)
                     .html('?');
+
                 }
             }
-        );
+        });
     });
 
     if (config.power) {
@@ -154,7 +185,12 @@ function loadData() {
                     data30.push([ data[i][0]*1000, +(data[i][1]-offset).toFixed(attr.decimals) ]);
                     offset = data[i][1];
                 }
-                var name = $('<div/>').html(attr.name).text();
+                var name = $('<div/>').html(attr.name).text(),
+                    m1 = now.getMonth(),
+                    m2 = (now.getDate() > 15) ? m1 + 1 : m1 - 1;
+
+                if (m2 > 11) m2 = 0; // in 2nd half of december
+
                 var options = $.extend(chartOptions, {
                     tooltip: {
                         valueSuffix: ' ' + attr.unit,
@@ -164,7 +200,7 @@ function loadData() {
                         plotBands: [{
                             color: color_est,
                             from: 0,
-                            to: config.estimate[today.getMonth()]/30
+                            to: (config.estimate[m1] + config.estimate[m2]) / 2 / 30
                         }],
                         title: { text: attr.unit }
                     }
@@ -190,24 +226,36 @@ function loadData() {
             APIUrl + 'data/' + config.energy + '?callback=?',
             {
                 attributes: true,
-                period: '1m',
-                start: start.getTime()/1000,
-                short: true
+                period: '7d',
+                full: true,
+                start: start.getTime()/1000
             },
             function(data) {
-                var attr = data.shift(), _data = [], offset = 0, _est = [];
+
+                var attr = data.shift(), _data = [], _est = [], d = new Date(), last;
+
                 for (i=0; i<data.length; i++) {
-                    _data.push([ data[i][0]*1000, Math.round(data[i][1]-offset, 0) ]);
-                    _est.push([ data[i][0]*1000, config.estimate[i] ]);
-                    offset = data[i][1];
+                    _data.push([ data[i]['timestamp']*1000, Math.round(data[i]['consumption'], 0) ]);
+                    // Calc actual month of timestamp
+                    d = new Date(data[i]['timestamp']*1000);
+                    // Add estimate on month change and last at last row
+                    if (d.getMonth() != last || i == data.length-1) {
+                        // Average month length of 30.4 days
+                        _est.push( [ data[i]['timestamp']*1000, +(config.estimate[d.getMonth()]/30.4*7).toFixed(0) ]);
+                        last = d.getMonth();
+                    }
                 }
 
-                i--;
+                var end = new Date(new Date().getFullYear()+1, 0, 1); // 1st of Jan next year
 
                 // Fill estimated data until end of year
-                for (j=1; i+j<12; j++) {
-                    _est.push([ (data[i][0]+j*30*86400)*1000, config.estimate[i+j] ]);
+                while (d < end) {
+                    d = new Date(d.getTime() + 7 * 8.64e7);
+                    _est.push([ d.getTime(), +(config.estimate[d.getMonth()]/30.4*7).toFixed(0) ]);
                 }
+
+                // Last row is AFTER end, so remove it
+                _est.pop();
 
                 // HTML decode name
                 var name = $('<div/>').html(attr.name).text(), series = [];
@@ -226,7 +274,9 @@ function loadData() {
                 series.push({
                     color: color_act,
                     name: name,
-                    type: 'column',
+                    marker: { enabled: false },
+                    type: 'spline',
+                    lineWidth: 3,
                     data: _data 
                 });
 
@@ -234,7 +284,7 @@ function loadData() {
                     tooltip: {
                         shared: true,
                         valueSuffix: ' ' + attr.unit,
-                        xDateFormat: '%Y-%m'
+                        xDateFormat: '%Y-%m-%d'
                     },
                     yAxis: { title: { text: attr.unit } },
                     series: series,
@@ -266,8 +316,8 @@ function resizeChart(container) {
  */
 function translate(languages) {
     var l = languages;
-    this._ = function(text) {
-        return l[text] ? l[text] : '{{' + text + '}}';
+    this._ = function(text, lazy) {
+        return l[text] ? l[text] : (lazy ? text : '{{' + text + '}}');
     }
 }
 
