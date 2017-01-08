@@ -185,11 +185,11 @@ function loadData() {
                     data30.push([ data[i][0]*1000, +(data[i][1]-offset).toFixed(attr.decimals) ]);
                     offset = data[i][1];
                 }
-                var name = $('<div/>').html(attr.name).text(),
-                    m1 = now.getMonth(),
+                var m1 = now.getMonth(),
                     m2 = (now.getDate() > 15) ? m1 + 1 : m1 - 1;
 
-                if (m2 > 11) m2 = 0; // in 2nd half of december
+                // 1st half of januar        2nd half of december
+                if (m2 < 0) m2 = 11; else if (m2 > 11) m2 = 0;
 
                 var options = $.extend(chartOptions, {
                     tooltip: {
@@ -208,7 +208,7 @@ function loadData() {
                 // Week chart
                 options.series = [{
                     color: color_act,
-                    name: name,
+                    name: $('<div/>').html(attr.name).text(),
                     type: 'column',
                     data: data30.slice(-7) // Last 7 days
                 }];
@@ -251,14 +251,22 @@ function loadData() {
                 // Fill estimated data until end of year
                 while (d < end) {
                     d = new Date(d.getTime() + 7 * 8.64e7);
-                    _est.push([ d.getTime(), +(config.estimate[d.getMonth()]/30.4*7).toFixed(0) ]);
+                    if (d.getMonth() != last || i == data.length-1) {
+                        _est.push([ d.getTime(), +(config.estimate[d.getMonth()]/30.4*7).toFixed(0) ]);
+                        last = d.getMonth();
+                    }
                 }
 
                 // Last row is AFTER end, so remove it
                 _est.pop();
 
-                // HTML decode name
-                var name = $('<div/>').html(attr.name).text(), series = [];
+                var series = [{
+                    color: color_act,
+                    // HTML decode name
+                    name: $('<div/>').html(attr.name).text(),
+                    type: 'column',
+                    data: _data
+                }];
 
                 // Estimates defined?
                 if (config.estimate.reduce(function(a, b) { return a+b }, 0)) {
@@ -266,19 +274,10 @@ function loadData() {
                         color: color_est,
                         name: i18n._('estimate'),
                         marker: { enabled: false },
-                        type: 'areaspline',
+                        type: 'spline',
                         data: _est
                     });
                 }
-
-                series.push({
-                    color: color_act,
-                    name: name,
-                    marker: { enabled: false },
-                    type: 'spline',
-                    lineWidth: 3,
-                    data: _data 
-                });
 
                 drawChart('year-chart', $.extend(chartOptions, {
                     tooltip: {
