@@ -325,6 +325,12 @@ function translate(languages) {
  */
 $(function() {
 
+    Highcharts.setOptions({
+        global: {
+            useUTC: false
+        }
+    });
+
     $(window).on('resize', function() {
         $('.highcharts-container').each(function(id, chart) {
             resizeChart($(chart).parent())
