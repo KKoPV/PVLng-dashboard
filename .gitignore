@@ -1,3 +1,4 @@
 config.js
 custom.*
-gz
+compress
+index-no-min.html

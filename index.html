@@ -15,8 +15,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Set a web app capable website
-         https://tomitm.github.io/appmanifest/ -->
+    <!-- Set a web app capable website https://tomitm.github.io/appmanifest/ -->
     <link rel="manifest" href="manifest.json">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -26,8 +25,8 @@
     <meta name="msapplication-navbutton-color" content="#337ab7">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="description" content="PVLng - PhotoVoltaic Logger new generation - Dashboard">
+    <meta name="author" content="Knut Kohl <github@knutkohl.de>">
 
     <link rel="apple-touch-icon" sizes="57x57" href="img/apple-touch-icon-57x57.png" />
     <link rel="apple-touch-icon" sizes="114x114" href="img/apple-touch-icon-114x114.png" />
@@ -57,7 +56,7 @@
     <script src="https://use.fontawesome.com/1ef5b408e5.js"></script>
 
     <!-- Styles -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.min.css">
     <link rel="stylesheet" href="custom.css">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -123,7 +122,7 @@
                     <div class="col-md-6">
                         <div class="panel panel-default">
                             <div class="panel-heading">
-                                <i class="fa fa-bar-chart fa-fw"></i> <span class="i18n" data-i18n="year_chart"></span>
+                                <i class="fa fa-area-chart fa-fw"></i> <span class="i18n" data-i18n="year_chart"></span>
                             </div>
                             <div class="panel-body text-center">
                                 <div id="year-chart"><i class="fa fa-spinner fa-spin"></i></div>
@@ -156,8 +155,8 @@
                         </div>
                         <div class="col-xs-9 text-right">
                             <div class="huge">
-                                <span class="last-value">&nbsp;</span>
-                                <span class="channel-unit"><i class="fa fa-spinner fa-spin"></i></span>
+                                <span class="last-value"><i class="fa fa-spinner fa-spin"></i></span>
+                                <span class="channel-unit"></span>
                             </div>
                             <div class="channel-name">&nbsp;</div>
                         </div>
@@ -185,7 +184,7 @@
     <script src="config.js"></script>
 
     <!-- Scripts -->
-    <script src="script.js"></script>
+    <script src="script.min.js"></script>
     <script src="custom.js"></script>
 
 </body>
