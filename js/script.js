@@ -59,6 +59,8 @@ function loadData() {
 
     var container = $('.badges'), now = new Date();
 
+    $('.fa.fa-refresh').addClass('fa-spin');
+
     if (!container.children().length) {
         // 1st call, create badges by cloning template
         var tpl = $($('#badge-template').html());
@@ -333,6 +335,8 @@ function loadData() {
             }
         );
     }
+
+    setTimeout(function() { $('.fa.fa-refresh').removeClass('fa-spin') }, 3000);
 }
 
 /**
