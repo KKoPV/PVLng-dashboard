@@ -59,6 +59,8 @@ function loadData() {
 
     var container = $('.badges'), now = new Date();
 
+    $('.fa.fa-refresh').addClass('fa-spin');
+
     if (!container.children().length) {
         // 1st call, create badges by cloning template
         var tpl = $($('#badge-template').html());
@@ -132,38 +134,79 @@ function loadData() {
         $('.chart-wrapper.power').show();
 
         // Day chart
-        $.getJSON(
-            APIUrl + 'data/' + config.power + '?callback=?',
-            {
-                attributes: true,
-                period: '5i',
-                short: true
-            },
-            function(data) {
-                var attr = data.shift(), _data = [];
-                for (i=0; i<data.length; i++) {
-                    _data.push([ data[i][0]*1000, data[i][1] ]);
+        $.when(
+            $.getJSON(
+                APIUrl + 'data/' + config.power + '?callback=?',
+                {
+                    attributes: true,
+                    period: '5i',
+                    short: true
                 }
-                var name = $('<div/>').html(attr.name).text();
-                var options = $.extend(chartOptions, {
-                    title: { text: name },
-                    tooltip: {
-                        shared: true,
-                        valueSuffix: ' ' + attr.unit,
-                        xDateFormat: '%H:%M'
+            ),
+            $.getJSON(APIUrl + 'sunrise?callback=?', { short: true }),
+            $.getJSON(APIUrl + 'sunset?callback=?',  { short: true })
+        ).done(function(data, sunrise, sunset) {
+
+            data    = data[0];
+            sunrise = sunrise[0];
+            sunset  = sunset[0];
+
+            var attr = data.shift(), _data = [];
+
+            for (i=0; i<data.length; i++) {
+                _data.push([ data[i][0] * 1000, data[i][1] ]);
+            }
+
+            var name = $('<div/>').html(attr.name).text();
+
+            var options = $.extend(chartOptions, {
+
+                chart: {
+                    // Make space for the sun icons
+                    spacingLeft:   5,
+                    spacingRight:  5,
+                },
+
+                title: { text: name },
+
+                tooltip: {
+                    valueSuffix: ' ' + attr.unit,
+                    xDateFormat: '%H:%M'
+                },
+
+                yAxis: { title: { text: attr.unit } },
+                series: [
+                    {
+                        color: '#F81',
+                        name: 'Sunrise',
+                        type: 'scatter',
+                        marker: { symbol: 'url(/img/sunrise.png)' },
+                        tooltip: { pointFormat: '<br/>' },
+                        data: [
+                            [ sunrise[0][0] * 1000, 0 ]
+                        ]
                     },
-                    yAxis: { title: { text: attr.unit } },
-                    series: [{
+                    {
+                        color: '#F81',
+                        name: 'Sunset',
+                        type: 'scatter',
+                        marker: { symbol: 'url(/img/sunset.png)' },
+                        tooltip: { pointFormat: '<br/>' },
+                        data: [
+                            [ sunset[0][0]  * 1000, 0 ]
+                        ]
+                    },
+                    {
                         color: color_act,
                         name: name,
                         marker: { enabled: false },
                         type: 'areaspline',
                         data: _data
-                    }]
-                });
-                drawChart('day-chart', options);
-            }
-        );
+                    }
+                ]
+            });
+            drawChart('day-chart', options);
+        });
     }
 
     if (config.energy) {
@@ -292,6 +335,8 @@ function loadData() {
             }
         );
     }
+
+    setTimeout(function() { $('.fa.fa-refresh').removeClass('fa-spin') }, 3000);
 }
 
 /**
