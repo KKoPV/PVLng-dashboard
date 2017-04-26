@@ -69,7 +69,8 @@ function loadData() {
             $('.channel-icon', el).addClass('fa-' + badge.icon);
             el.prop('id', 'badge-'+id).appendTo(container);
         });
-        $('body').css({ opacity: 1 });
+        $('#pageload').remove();
+        $('#wrapper').hide().css('opacity', 1).fadeIn();
     }
 
     // Get data
@@ -335,8 +336,6 @@ function loadData() {
             }
         );
     }
-
-    setTimeout(function() { $('.fa.fa-refresh').removeClass('fa-spin') }, 3000);
 }
 
 /**
@@ -345,6 +344,20 @@ function loadData() {
 function drawChart(container, options) {
     options.chart.height = $('#'+container).width() * 9 / 16;
     Highcharts.chart(container, options);
+    // Unspin after 1st loaded chart
+    setTimeout(
+        function() {
+            var el = $('.fa.fa-refresh');
+            if (el.hasClass('fa-spin') && !el.data('unspin')) {
+            	el.data('unspin', true);
+                el.fadeOut(function() { 
+                    el.removeClass('fa-spin').show();
+                    el.data('unspin', null);
+                });
+            }
+        },
+        1000
+    );
 }
 
 /**
@@ -352,7 +365,7 @@ function drawChart(container, options) {
  */
 function resizeChart(container) {
     w = container.width();
-    container.highcharts().setSize(w, w * 9 / 16, true);
+    container.highcharts().setSize(w, w * config.ratio, true);
 }
 
 /**

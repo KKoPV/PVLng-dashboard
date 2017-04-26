@@ -6,17 +6,23 @@
  * @copyright  2012-2016 Knut Kohl
  * @license    MIT License (MIT) http://opensource.org/licenses/MIT
  */
-
-body {
-    opacity: 0;
-}
-
 template {
 	display: none !important;
 }
 
+#pageload {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 64px;
+    height: 21px;
+    margin-left: -32px;
+    margin-top: -15px;
+}
+
 #wrapper {
-  width: 100%;
+    opacity: 0;
+    width: 100%;
 }
 
 #page-wrapper {
