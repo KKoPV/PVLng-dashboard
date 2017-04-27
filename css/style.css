@@ -39,6 +39,11 @@ template {
     color: #337ab7;
 }
 
+i.fa-refresh {
+    cursor: pointer;
+    margin-top: 3px;
+}
+
 .month-wrapper,
 .chart-wrapper {
     display: none;
